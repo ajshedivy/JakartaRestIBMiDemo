@@ -1,4 +1,21 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "maven.view": "flat"
+    "maven.view": "flat",
+    "maven.terminal.favorites": [
+        {
+            "command": "clean package -Pwildfly-local wildfly:run",
+            "debug": false,
+            "alias": "wildfly: local"
+        },
+        {
+            "command": "clean package -Pwildfly-remote wildfly:deploy",
+            "debug": false,
+            "alias": "wildfly: remote"
+        },
+        {
+            "command": "-Pwildfly-remote wildfly:undeploy",
+            "debug": false,
+            "alias": "undeploy"
+        }
+    ]
 }

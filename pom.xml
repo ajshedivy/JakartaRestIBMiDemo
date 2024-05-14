@@ -80,6 +80,11 @@
             <artifactId>jakarta.ws.rs-api</artifactId>
             <version>3.0.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>3.1.5</version>
+        </dependency>
 
     </dependencies>
 
@@ -102,6 +107,14 @@
                     <artifactId>sonar-maven-plugin</artifactId>
                     <version>${sonar-maven-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.6.0</version>
+                    <configuration>
+                      <mainClass>com.github.ajshedivy.restfuldemo.resources.EmployeeTest</mainClass>
+                    </configuration>
+                  </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -121,7 +134,7 @@
     </build>
     <profiles>
         <profile>
-            <id>wildfly</id>
+            <id>wildfly-remote</id>
             <properties>
                 <!-- Wildfly server -->
                 <wildfly.artifactId>wildfly-preview-dist</wildfly.artifactId>
@@ -132,7 +145,7 @@
                 <plugins>
 
                     <!-- unpack a copy of WildFly-->
-                    <plugin>
+                    <!-- <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
                         <version>${maven-dependency-plugin.version}</version>
@@ -157,7 +170,7 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
+                    </plugin> -->
 
                     <!-- The WildFly plugin deploys your war to a local running WildFly container -->
                     <!-- To use, run: mvn package wildfly:deploy -->
@@ -197,6 +210,57 @@
                           <command>reload</command>
                       </commands>-->
                         </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <repositories>
+                <repository>
+                    <id>opensaml</id>
+                    <url>https://build.shibboleth.net/nexus/content/repositories/releases/</url>
+                </repository>
+            </repositories>
+        </profile>
+        <profile>
+            <id>wildfly-local</id>
+            <properties>
+                <!-- Wildfly server -->
+                <wildfly.artifactId>wildfly-preview-dist</wildfly.artifactId>
+                <wildfly.serverConfig>standalone-full.xml</wildfly.serverConfig>
+                <jboss-as.home>${project.build.directory}/wildfly-preview-${wildfly.version}</jboss-as.home>
+            </properties>
+            <build>
+                <plugins>
+                    <!-- unpack a copy of WildFly-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>${maven-dependency-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>unpack</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>org.wildfly</groupId>
+                                            <artifactId>${wildfly.artifactId}</artifactId>
+                                            <version>${wildfly.version}</version>
+                                            <type>zip</type>
+                                            <overWrite>false</overWrite>
+                                            <outputDirectory>${project.build.directory}</outputDirectory>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <version>${wildfly-maven-plugin.version}</version>
                     </plugin>
                 </plugins>
             </build>
